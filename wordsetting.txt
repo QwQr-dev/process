@@ -1,0 +1,4 @@
+wordtype:Microsoft YaHei UI
+wordsize:11
+wordcolor:#000000
+backgroundcolor:#ffffff
