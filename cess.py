@@ -193,7 +193,7 @@ if is_admin():
                 for c in banned_processes_content:
                     time.sleep(0.3)
                     try:
-                        subprocess.run(['cmd','/c',f'taskkill /f /im {c} /t'])  # 终止进程
+                        subprocess.run(['cmd','/c',f'taskkill /f /im {c.lower()} /t'])  # 终止进程
                     except Exception as e:
                         with open(f'{directory_total}\\cess.log','a',encoding='utf-8') as f:
                             f.write(f'{e}\n')

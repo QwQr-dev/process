@@ -24,11 +24,6 @@ def is_admin():
         messagebox.showerror('process',f'发生错误：{e}')
         return False
     
-def create_sub_window():
-    sub_window_count = 0
-    sub_window_count += 1
-    return sub_window_count
-
 def restart_program():
     '''重启程序'''
     command = f'''
@@ -47,7 +42,7 @@ Set WshShell = Nothing
     
     a = messagebox.askquestion('process','你确定要重启程序吗？')
     if a == 'yes':
-        #通过调用vbs文件（vbs文件主要是隐藏bat文件在运行后打开的命令提示窗口）来运行bat文件，以达到重启的目的
+        # 通过调用vbs文件（vbs文件主要是隐藏bat文件在运行后打开的命令提示窗口）来运行bat文件，以达到重启的目的
         with open(f'{s}restart.bat','w',encoding='utf-8') as f:
             f.write(command)
         with open(f'{s}restart.vbs','w',encoding='utf-8') as f:
@@ -445,7 +440,7 @@ def about_sub_window():
 源代码将会在Github上开源
 网址：
 
-----------------------------------------------
+https://github.com/QwQr-dev/process
 
 其中，
 
@@ -551,57 +546,56 @@ def information():
         return f.read()
     
 def computer_information():
-    if create_sub_window() == 1:
-        def re_computer_information():
-            '''更新设备信息'''
-            self = messagebox.askquestion('设备基本信息','是否要更新设备信息？')
-            if self == 'yes':
-                sub_text.config(state=tk.NORMAL)
-                sub_text.delete('1.0',tk.END)
-                sub_text.insert(tk.END,information())
-                sub_text.config(state=tk.DISABLED)
-                messagebox.showinfo('设备基本信息','已更新设备信息')
-            else:
-                messagebox.showinfo('设备基本信息','已取消操作')
-            return
+    def re_computer_information():
+        '''更新设备信息'''
+        self = messagebox.askquestion('设备基本信息','是否要更新设备信息？')
+        if self == 'yes':
+            sub_text.config(state=tk.NORMAL)
+            sub_text.delete('1.0',tk.END)
+            sub_text.insert(tk.END,information())
+            sub_text.config(state=tk.DISABLED)
+            messagebox.showinfo('设备基本信息','已更新设备信息')
+        else:
+            messagebox.showinfo('设备基本信息','已取消操作')
+        return
+    
+    def save_computer_information():
+        '''保存设备信息'''
+        file_path = filedialog.asksaveasfilename(defaultextension='.txt',
+                                            filetypes=[('Text files', '*.txt')],
+                                            title='设备基本信息')
+        if file_path:
+            try:
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(information())
+                messagebox.showinfo("设备基本信息", f"已保存到 {file_path}")
+            except Exception as e:
+                messagebox.showerror("设备基本信息", f"无法保存文件：{e}")
+        return
         
-        def save_computer_information():
-            '''保存设备信息'''
-            file_path = filedialog.asksaveasfilename(defaultextension='.txt',
-                                                filetypes=[('Text files', '*.txt')],
-                                                title='设备基本信息')
-            if file_path:
-                try:
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        f.write(information())
-                    messagebox.showinfo("设备基本信息", f"已保存到 {file_path}")
-                except Exception as e:
-                    messagebox.showerror("设备基本信息", f"无法保存文件：{e}")
-            return
-            
-        sub_window = tk.Toplevel(Windows)
-        sub_window.title("设备基本信息")
-        sub_window.geometry("860x480")
-        sub_window.resizable()
-        sub_window.transient(Windows)  # 设置副窗口与主窗口的关联
-        sub_window.grab_set()  # 捕获所有事件到副窗口
+    sub_window = tk.Toplevel(Windows)
+    sub_window.title("设备基本信息")
+    sub_window.geometry("860x480")
+    sub_window.resizable()
+    sub_window.transient(Windows)  # 设置副窗口与主窗口的关联
+    sub_window.grab_set()  # 捕获所有事件到副窗口
 
-        sub_text = tk.Text(sub_window,height=20, width=80,font=text_font)
-        sub_text.pack(side="left", fill=tk.BOTH)
-        sub_text.insert(tk.END,information())
-        sub_text.config(state=tk.DISABLED)  # 设置为只读模式
-        # 创建一个滚动条，并设置其command选项为text的yview方法
-        scrollbar = tk.Scrollbar(sub_window, command=text.yview)
-        scrollbar.pack(side=tk.LEFT, fill=tk.Y)
-        # 设置text小部件的yscrollcommand选项为scrollbar的set方法
-        sub_text.configure(yscrollcommand=scrollbar.set)
+    sub_text = tk.Text(sub_window,height=20, width=80,font=text_font)
+    sub_text.pack(side="left", fill=tk.BOTH)
+    sub_text.insert(tk.END,information())
+    sub_text.config(state=tk.DISABLED)  # 设置为只读模式
+    # 创建一个滚动条，并设置其command选项为text的yview方法
+    scrollbar = tk.Scrollbar(sub_window, command=text.yview)
+    scrollbar.pack(side=tk.LEFT, fill=tk.Y)
+    # 设置text小部件的yscrollcommand选项为scrollbar的set方法
+    sub_text.configure(yscrollcommand=scrollbar.set)
 
-        button1 = ttk.Button(sub_window,text='保存',width=15,command=save_computer_information)
-        button1.pack(side='top')
-        update_button = ttk.Button(sub_window, text="更新设备信息",width=15,command=re_computer_information)
-        update_button.pack(side='top')
-        button2 = ttk.Button(sub_window,text='关闭',width=15,command=sub_window.destroy)
-        button2.pack(side='top')
+    button1 = ttk.Button(sub_window,text='保存',width=15,command=save_computer_information)
+    button1.pack(side='top')
+    update_button = ttk.Button(sub_window, text="更新设备信息",width=15,command=re_computer_information)
+    update_button.pack(side='top')
+    button2 = ttk.Button(sub_window,text='关闭',width=15,command=sub_window.destroy)
+    button2.pack(side='top')
     return
 
 def new_file():
@@ -678,7 +672,7 @@ def save_file():
         messagebox.showwarning('process','没有文件可保存')
         return
     
-def resave_file():
+def save_as_file():
     '''将文件另存为新的文件'''
     content = text.get('1.0',tk.END)
     if public_directory == directory_new_file:
@@ -802,7 +796,7 @@ def cleaned_directory():
 def temporary_operation_cess():
     if os.path.isfile(s + 'cess.exe'):
         command = f'''
-        
+  
 '''
         
         with open(f'{s}start.bat','w',encoding='utf-8') as f:
@@ -1048,7 +1042,7 @@ def main():
         keyboard.add_hotkey('ctrl+n',new_file)
         keyboard.add_hotkey('ctrl+o',open_file)
         keyboard.add_hotkey('ctrl+s',save_file)
-        keyboard.add_hotkey('ctrl+shift+s',resave_file)
+        keyboard.add_hotkey('ctrl+shift+s',save_as_file)
         keyboard.add_hotkey('ctrl+w',close_file)
         keyboard.add_hotkey('ctrl+z',undo)
         keyboard.add_hotkey('ctrl+y',redo)
@@ -1079,7 +1073,7 @@ def main():
     file_menu.add_command(label="新建文件(Ctrl+N)", command=new_file)
     file_menu.add_command(label="打开文件(Ctrl+O)", command=open_file)
     file_menu.add_command(label="保存文件(Ctrl+S)", command=save_file)
-    file_menu.add_command(label='另存为(Ctrl+Shift+S)',command=resave_file)
+    file_menu.add_command(label='另存为(Ctrl+Shift+S)',command=save_as_file)
     file_menu.add_command(label='关闭文件(Ctrl+W)',command=close_file)
     file_menu.add_separator()  # 添加分隔线
     file_menu.add_command(label='打开banned_processes.txt',command=open_banned_processes)
@@ -1211,6 +1205,8 @@ if __name__ == '__main__':
                         pass
         except FileNotFoundError:
             messagebox.showerror('process',"错误：未找到配置文件 'wordsetting.txt'，将使用默认字体")
+            with open(f'{s}wordsetting.txt','w',encoding='utf-8') as f:
+                pass
         except Exception as e:
             messagebox.showerror('process',f'发生其他错误：\n{e}')
 
